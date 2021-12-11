@@ -1,11 +1,14 @@
+from decimal import InvalidContext
 import numpy as np
 import scipy.ndimage
 
-
-fh = open('ex.txt', 'r')
-shape = (5,10)
-# fh = open('input.txt', 'r')
-# shape = (100,100)
+# if True:
+if False:
+    fh = open('/Users/bill/fun/aoc21/9/ex.txt', 'r')
+    shape = (5,10)
+else:
+    fh = open('/Users/bill/fun/aoc21/9/input.txt', 'r')
+    shape = (100,100)
 
 lines = fh.readlines()
 
@@ -18,94 +21,47 @@ neighbors = np.array(
        [1, 0, 1],
        [0, 1, 0]])
 lowpoints = seafloor < scipy.ndimage.minimum_filter(seafloor, footprint=neighbors, mode='constant', cval=999)
-# >>> ans * np.ones(shape=ans.shape) + seafloor*ans
 low_values = lowpoints * np.ones(shape=lowpoints.shape) + seafloor*lowpoints
+print('low point count', (lowpoints * np.ones(shape=lowpoints.shape, dtype=int)).sum())
 
 basin_origins = []
-for i,x in enumerate(lowpoints):
-    if x:
-        basin_origins.append(i)
+for pt, value in np.ndenumerate(lowpoints):
+    if value:
+        basin_origins.append(pt)
 
-def is_basin(base, neighbor):
-    
-def 
+visited = set()
+basins = []
+for pt, value in np.ndenumerate(seafloor):
+    if pt in visited or value == 9:
+        continue
+    basin_size = 0
+    potentials = set([pt])
+    # visited.add(pt)
+    while potentials:
+        p = potentials.pop() 
+        if p in visited:
+            continue
+        basin_size += 1
+        visited.add(p)
 
-def compute_size(seafloor, origin):
-    points = [origin]
-    canvas = seafloor.copy()
-    for pt in points:
-        top = np.array([[0,1,0], [1,0,1], [0,0,0]])
-        bottom = np.array([[0,0,0], [1,0,1], [0,1,0]])
-        left = np.array([[0,1,0], [1,0,0], [0,1,0]])
-        right = np.array([[0,1,0], [0,0,1], [0,1,0]])
-        #top
-        top_neighbor[0] < 0 ||
+        if p[0] > 0 and seafloor[p[0]-1,p[1]] != 9:
+            potentials.add((p[0]-1, p[1]))
+        if p[0] < seafloor.shape[0]-1 and seafloor[p[0]+1, p[1]] != 9:
+            potentials.add((p[0]+1, p[1]))
 
-        #bottom
-        bottom_neighbor = (pt[0]+1, pt[1])
-        #left
-        left_neighbor = (pt[0], pt[1]-1)
-        #right
-        right_neighbor = (pt[0], pt[1]+1)
-        
+        if p[1] > 0 and seafloor[p[0],p[1]-1] != 9:
+            potentials.add((p[0], p[1]-1))
+        if p[1] < seafloor.shape[1]-1 and seafloor[p[0], p[1]+1] != 9:
+            potentials.add((p[0], p[1]+1))
 
+    basins.append(basin_size)
 
-
-sizes = []
-for basin_origin in basin_origins:
-    sizes.append(compute_size(seafloor, basin_origin))
+print(basins)
+basins = sorted(basins, reverse=True)
+print(basins[0] * basins[1] * basins[2])
 
 
 
 
 
-# >>> top
-# array([[0, 1, 0],
-#        [1, 0, 1],
-#        [0, 0, 0]])
-# >>> k = seafloor[1:4, 1:4]
-# >>> k
-# array([[9, 8, 7],
-#        [8, 5, 6],
-#        [7, 6, 7]])
-# >>> k * top
-# array([[0, 8, 0],
-#        [8, 0, 6],
-#        [0, 0, 0]])
-# >>> k[2,2]
-# 7
-# >>> k[1,1]
-# 5
-# >>> k[1,1] < (k*top)
-# array([[False,  True, False],
-#        [ True, False,  True],
-#        [False, False, False]])
-# >>> kans = _
-# >>> kans * top
-# array([[0, 1, 0],
-#        [1, 0, 1],
-#        [0, 0, 0]])
-# >>> sum(kans * top)
-# array([1, 1, 1])
-# >>> (kans * top).sum()
-# 3
-# >>> (kans * top).sum() == top.sum()
-# True
-# >>> k = seafloor[0:3, 0:3]
-# >>> kans = k[1,1] < (k*top)
-# >>> kans
-# array([[False, False, False],
-#        [False, False, False],
-#        [False, False, False]])
-# >>> k
-# array([[2, 1, 9],
-#        [3, 9, 8],
-#        [9, 8, 5]])
-# >>> (kans * top).sum() == top.sum()
-# False
-# >>> seafloor
-# array([[2, 1, 9, 9, 9, 4, 3, 2, 1, 0],
-#        [3, 9, 8, 7, 8, 9, 4, 9, 2, 1],
-#        [9, 8, 5, 6, 7, 8, 9, 8, 9, 2],
-#        [8, 7, 6, 7, 8, 9, 6, 7, 8, 9],
-#        [9, 8, 9, 9, 9, 6, 5, 6, 7, 8]])
+
