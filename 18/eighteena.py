@@ -106,6 +106,14 @@ def reduce(tree, verbose=False):
             reduce_again = True
         if verbose:
             tree.pprint()
+
+def add(tree_a, tree_b):
+    sum = ParentNode(-1)
+    sum.left = tree_a
+    tree_a.parent = sum
+    sum.right = tree_b
+    tree_b.parent = sum
+    return sum
  
 def main():
     input = [[[[0,9],2],3],4]
@@ -126,6 +134,15 @@ def test():
     # split(root)
     # root.pprint()
 
+def ex1():
+    ina = [[[[4,3],4],4],[7,[[8,4],9]]]
+    inb = [1,1]
+    tree_a = ParentNode(-1)
+    load(ina, tree_a)
+    tree_b = ParentNode(-1)
+    load(inb, tree_b)
+    sum = add(tree_a, tree_b)
+    reduce(sum, verbose=True)
+    sum.pprint()
 
-test()
-
+ex1()
