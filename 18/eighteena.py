@@ -22,6 +22,7 @@ to split a number X
 X -> [floor(X/2), ceil(X/2)],
 
 '''
+import ast
 from math import floor, ceil
 from binarytree import Node
 
@@ -48,7 +49,8 @@ def explode(tree):
         if (cur.left and 
             explode_root not in cur.left.postorder and
             len(cur.left.leaves)> 0):
-            left_target = cur.left.leaves[0]
+            # left_target = cur.left.leaves[0]
+            left_target = cur.left.inorder[-1]
             break
         cur = cur.parent
 
@@ -62,7 +64,8 @@ def explode(tree):
         if (cur.right and 
             explode_root not in cur.right.postorder and
             len(cur.right.leaves)> 0):
-            right_target = cur.right.leaves[0]
+            # right_target = cur.right.leaves[0]
+            right_target = cur.right.inorder[0]
             break
         cur = cur.parent
 
@@ -106,6 +109,7 @@ def reduce(tree, verbose=False):
             reduce_again = True
         if verbose:
             tree.pprint()
+    
 
 def add(tree_a, tree_b):
     sum = ParentNode(-1)
@@ -114,7 +118,32 @@ def add(tree_a, tree_b):
     sum.right = tree_b
     tree_b.parent = sum
     return sum
- 
+
+def sum_file(fname):
+    lines = []
+    with open(fname, 'r') as fh:
+        lines = fh.readlines()
+
+    sum = ParentNode(-1)
+    load(ast.literal_eval(lines.pop(0).strip()), sum)
+    while(lines):
+        righthand = ParentNode(-1)
+        load(ast.literal_eval(lines.pop(0).strip()), righthand)
+        sum = add(sum, righthand)
+        print(sum.inorder)
+        reduce(sum, verbose=True)
+        print('finished reduce vvvv')
+        sum.pprint()
+        print('finished reduce ^^^^^')
+
+    # sum.pprint()
+
+sum_file('/Users/bill/fun/aoc21/18/ex.txt')
+# sum_file('/Users/bill/fun/aoc21/18/exa.txt')
+# sum_file('/Users/bill/fun/aoc21/18/exb.txt')
+# sum_file('/Users/bill/fun/aoc21/18/exc.txt')
+# sum_file('/Users/bill/fun/aoc21/18/exd.txt')
+
 def main():
     input = [[[[0,9],2],3],4]
     root = ParentNode(-1)   
@@ -145,4 +174,3 @@ def ex1():
     reduce(sum, verbose=True)
     sum.pprint()
 
-ex1()
