@@ -137,7 +137,7 @@ def sum_file(fname):
         righthand = ParentNode(-1)
         load(ast.literal_eval(lines.pop(0).strip()), righthand)
         sum = add(sum, righthand)
-        print(sum.inorder)
+        # print(sum.inorder)
         reduce(sum)
 
     print('finished reduce vvvv')
@@ -145,14 +145,36 @@ def sum_file(fname):
     print('finished reduce ^^^^^')
     print('magnitude', magnitude(sum))
 
-    # sum.pprint()
+def find_largest_mag(fname):
+    magnitudes = []
+    lines = []
+    with open(fname, 'r') as fh:
+        lines = fh.readlines()
+
+    lists = [ast.literal_eval(line.strip()) for line in lines]
+
+    for i in range(len(lists)):
+        for j in range(len(lists)):
+            if i == j:
+                continue
+            add_a = ParentNode(-1)
+            load(lists[i], add_a)
+            add_b = ParentNode(-1)
+            load(lists[j], add_b)
+            sum = add(add_a, add_b)
+            reduce(sum)
+            magnitudes.append(magnitude(sum))
+    print(sorted(magnitudes, reverse=True)[0])
+
+# find_largest_mag('/Users/bill/fun/aoc21/18/exl.txt')
+find_largest_mag('/Users/bill/fun/aoc21/18/input.txt')
 
 # sum_file('/Users/bill/fun/aoc21/18/ex.txt')
 # sum_file('/Users/bill/fun/aoc21/18/exa.txt')
 # sum_file('/Users/bill/fun/aoc21/18/exb.txt')
 # sum_file('/Users/bill/fun/aoc21/18/exc.txt')
 # sum_file('/Users/bill/fun/aoc21/18/exl.txt')
-sum_file('/Users/bill/fun/aoc21/18/input.txt')
+# sum_file('/Users/bill/fun/aoc21/18/input.txt')
 
 def main():
     input = [[[[0,9],2],3],4]
